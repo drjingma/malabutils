@@ -5,6 +5,7 @@ Version: 0.1.0
 Author: Jing Ma
 Maintainer: Jing Ma <crystal.jing.ma@gmail.com>
 Description: Provides functions for log transformations, centered log-ratio transformations, Gower centering, Procrustes analysis, and geometric means. 
+Imports: dplyr, magrittr, tibble
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -1,3 +1,5 @@
+#' @importFrom magrittr %>%
+NULL
 
 #' Log transform positive counts
 #'
@@ -137,3 +139,27 @@ clr.epsilon <- function(mat, base = exp(1), const = NULL) {
   mat[index] <- a[index] + abs(min(a)) + const
   mat
 }
+
+#' Function to filter taxa by relative abundances and prevalence
+#' @import tibble
+#' @import dplyr
+#' @param otu_table a matrix with rows being samples
+#' @param min_abundance threshold for minimum relative abundances
+#' @param min_sample threshold for minimum prevalence
+#' @return A matrix of relative abundances containing the filtered features
+#' @details
+#' This function takes an OTU count matrix and returns a matrix of relative abundances with
+#' only features that pass the threshold.
+#'
+#' @export
+filter_by_min_abundance_min_sample <- function(otu_table, min_abundance, min_sample){
+  count_table_rel <- sweep(otu_table, 1, rowSums(otu_table), FUN='/')
+  relative_abundances = data.frame(count_table_rel) %>% tibble::rownames_to_column("ID")
+  keep = relative_abundances %>%
+    dplyr::select(-ID) %>%
+    dplyr::mutate(dplyr::across(everything(), ~ . > min_abundance)) %>%
+    colSums(na.rm = TRUE) > (nrow(relative_abundances) * min_sample)
+  df = relative_abundances %>% dplyr::select(c(ID,names(keep)[unname(keep)]))
+  df %>% tibble::column_to_rownames("ID")
+}
+
